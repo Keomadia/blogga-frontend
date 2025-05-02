@@ -37,9 +37,9 @@ const VideoFrame = memo(({ video, title }: { video: string; title: string }) => 
 
 export default function BlogDetail() {
     const { id } = useParams<{ id: string }>();
-    const API_URL = process.env.REACT_APP_API_URL;
+    const API_URL = 'https://blogga-flask-app.onrender.com';
     
-    const [loading, setLoading] = useState(true);
+    const [_, setLoading] = useState(true);
     const [, setBlogData] = useState([]);
     const [blog, setBlog] = useState<any>(null);
     const [views, setViews] = useState(0);
@@ -73,9 +73,6 @@ export default function BlogDetail() {
     
         incrementViews();
     }, [blog]);
-    
-    
-    if (loading) return <p>Loading blogs...</p>;
 
     if (!blog) {
         return <Typography variant="h5">Blog not found</Typography>;

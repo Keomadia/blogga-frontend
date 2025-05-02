@@ -14,8 +14,6 @@ import {
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import Masonry from '@mui/lab/Masonry';
-import { useNavigate } from 'react-router-dom';
-
 import BlogCard from '../components/BlogCard';
 import DefaultLayout from '../layouts/default';
 import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
@@ -50,8 +48,6 @@ export default function Blog() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [showNewsletterPopup, setShowNewsletterPopup] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
