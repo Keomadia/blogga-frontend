@@ -6,41 +6,83 @@ import CardMedia from '@mui/material/CardMedia';
 // import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 // import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { blogData } from '../data/blogData'; 
+import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import DefaultLayout from '../layouts/default';
 import ShareButton from '../components/ShareButton';
+
+
+    
+const VideoFrame = memo(({ video, title }: { video: string; title: string }) => {
+    return (
+    <Box sx={{ position: 'relative', pt: '56.25%', width: '100%', borderRadius: 2, mb: 2 }}>
+        <CardMedia
+        component="iframe"
+        src={video}
+        title={title}
+        allowFullScreen
+        sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            border: 0,
+            borderRadius: 2,
+        }}
+        />
+    </Box>
+    );
+});
+
 
 export default function BlogDetail() {
     const { id } = useParams<{ id: string }>();
     const API_URL = process.env.REACT_APP_API_URL;
-    const blog = blogData.find((b:any) => b.id === parseInt(id || '', 10));
-    const VideoFrame = memo(({ video, title }: { video: string; title: string }) => {
-        return (
-          <Box sx={{ position: 'relative', pt: '56.25%', width: '100%', borderRadius: 2, mb: 2 }}>
-            <CardMedia
-              component="iframe"
-              src={video}
-              title={title}
-              allowFullScreen
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 0,
-                borderRadius: 2,
-              }}
-            />
-          </Box>
-        );
-      });
-      
+    
+    const [loading, setLoading] = useState(true);
+    const [, setBlogData] = useState([]);
+    const [blog, setBlog] = useState<any>(null);
+    const [views, setViews] = useState(0);
+    useEffect(() => {
+        const loadBlogs = async () => {
+            const data = await fetchBlogDataFromAPI();
+            setBlogData(data);
+            const foundBlog = data.find((b: any) => b.id === parseInt(id || '', 10));
+            setBlog(foundBlog);
+            if (foundBlog) setViews(foundBlog.views);
+            setLoading(false);
+        };
+        loadBlogs();
+    }, [id]);
 
+    useEffect(() => {
+        const incrementViews = async () => {
+            if (!blog) return;
+            try {
+                const updatedViews = views + 1;
+                await fetch(`${API_URL}/api/blog/update/${blog.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ views: updatedViews }),
+                });
+                setViews(updatedViews);
+            } catch (error) {
+                console.error('Error updating views:', error);
+            }
+        };
+    
+        incrementViews();
+    }, [blog]);
+    
+    
+    if (loading) return <p>Loading blogs...</p>;
 
     if (!blog) {
         return <Typography variant="h5">Blog not found</Typography>;
     }
+
+
+
 
     // const [likes, setLikes] = useState(blog.likes);
     // const [dislikes, setDislikes] = useState(blog.dislikes);
@@ -89,29 +131,10 @@ export default function BlogDetail() {
     //     await updateBlogData({ dislikes: newDislikes, likes: newLikes });
     // };
     
-    const [views, setViews] = useState(blog.views);
+
 
     
-    useEffect(() => {
-        const incrementViews = async () => {
-            try {
-                const updatedViews = views + 1;
-                await fetch(`${API_URL}/api/blog/update/${blog.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ views: updatedViews }),
-                });
-                setViews(updatedViews);
-            } catch (error) {
-                console.error('Error updating views:', error);
-            }
-        };
     
-        incrementViews();
-        
-    }, []);
     
     return (
         <DefaultLayout>
@@ -189,30 +212,53 @@ export default function BlogDetail() {
                             <Box component="section" >
                                 {section.list.map((item:any, idx:number) => (
                                     <Box key={idx} component="section" sx={{ mb: 2 }}>
-                                        {Object.entries(item).map(([key, value]) => (
-                                            <Container key={key}>
-                                                {value.length > 60 ? (
+                                        {Object.entries(item).map(([key, value]) => {
+                                            const stringValue = String(value); 
+                                            return (
+                                                <Container key={key}>
+                                                    {stringValue.length > 60 ? (
                                                         <>
-                                                            <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs:'1.1rem',md:'1.3rem' } }}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', md: '1.3rem' } }}
+                                                            >
                                                                 {key}
                                                             </Typography>
-                                                            <Typography variant="body1" sx={{ mb: 2, fontSize: { xs:'1rem',md:'1.1rem' } }}>
-                                                                {value}
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{ mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}
+                                                            >
+                                                                {stringValue}
                                                             </Typography>
                                                         </>
                                                     ) : (
-                                                        
-                                                        <Box sx={{display : "inline"}}>
-                                                            <Typography variant="h6" sx={{ display: 'inline', fontSize: { xs:'1rem',md:'1.3rem' }, fontWeight: 600 }}>
+                                                        <Box sx={{ display: 'inline' }}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{
+                                                                    display: 'inline',
+                                                                    fontSize: { xs: '1rem', md: '1.3rem' },
+                                                                    fontWeight: 600,
+                                                                }}
+                                                            >
                                                                 {key}
                                                             </Typography>
-                                                            <Typography variant="body1" sx={{ display: 'inline',mb: 2,fontSize: { xs:'0.9rem',md:'1.2rem' } }}>
-                                                                : {value}
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{
+                                                                    display: 'inline',
+                                                                    mb: 2,
+                                                                    fontSize: { xs: '0.9rem', md: '1.2rem' },
+                                                                }}
+                                                            >
+                                                                : {stringValue}
                                                             </Typography>
                                                         </Box>
                                                     )}
                                                 </Container>
-                                        ))}
+                                            );
+                                        })}
+
                                     </Box>
                                 ))}
                             </Box>

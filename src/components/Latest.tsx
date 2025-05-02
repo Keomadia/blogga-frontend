@@ -5,8 +5,9 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
-import { blogData } from '../data/blogData';
+import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import { useNavigate } from 'react-router';
+import { useState } from 'react';
 
 
 const StyledTypography = styled(Typography)({
@@ -59,17 +60,14 @@ export default function Latest() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
-
+  const [blogData, setBlogData] = useState<any>(null);
   const navigate = useNavigate();
-
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
   };
-
   const handleBlur = () => {
     setFocusedCardIndex(null);
   };
-
   const SyledGrid = styled(Grid)(() => ({
     border: '2px solid rgba(0, 0, 0, 0.1)',
     '&:hover': {
@@ -84,7 +82,14 @@ export default function Latest() {
       outlineOffset: '2px',
     },
   }));
-  
+    React.useEffect(() => {
+      const fetchData = async () => {
+        const data = await fetchBlogDataFromAPI();
+        setBlogData(data);
+      };
+      fetchData();
+    }, []);
+
   const articles = blogData.slice(0, 7);
 
   return (

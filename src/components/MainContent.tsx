@@ -17,14 +17,13 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
 import LogoText from '../components/LogoText';
 import {siteConfig} from '../config/site';
-import {blogData} from '../data/blogData';
+import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import { useNavigate } from 'react-router';
 
 function getRandomBlogs(blogData: any[], count: number): any[] {
   const shuffled = [...blogData].sort(() => 0.5 - Math.random());
   return shuffled.slice(0, count);
 }
-
 
 
 const SyledCard = styled(Card)(() => ({
@@ -87,6 +86,17 @@ export function Search({ onSearch }: { onSearch: (value: string) => void }) {
 
 export default function MainContent() {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('All categories');
+  const [blogData, setBlogData] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchBlogDataFromAPI();
+      setBlogData(data);
+    };
+    fetchData();
+  }, []);
+
+
   const [randomBlogs, setRandomBlogs] = React.useState(getRandomBlogs(blogData, 6));
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filteredBlogs, setFilteredBlogs] = React.useState(blogData);

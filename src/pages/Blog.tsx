@@ -1,23 +1,26 @@
-import { useState,useEffect } from 'react';
-import Container from '@mui/material/Container';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
-import Pagination from '@mui/material/Pagination';
-import IconButton from '@mui/material/IconButton';
-import Masonry from '@mui/lab/Masonry';
-import BlogCard from '../components/BlogCard';
-import DefaultLayout from '../layouts/default';
-import { blogData } from '../data/blogData';
-import { siteConfig } from '../config/site';
-import FormControl from '@mui/material/FormControl';
-import Typography from '@mui/material/Typography';
-import InputAdornment from '@mui/material/InputAdornment';
-import OutlinedInput from '@mui/material/OutlinedInput';
+import { useState, useEffect } from 'react';
+import {
+  Container,
+  Box,
+  Button,
+  Chip,
+  Pagination,
+  IconButton,
+  FormControl,
+  Typography,
+  InputAdornment,
+  OutlinedInput
+} from '@mui/material';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import RssFeedRoundedIcon from '@mui/icons-material/RssFeedRounded';
-import { NewsletterPopup } from '../components/Newsletter';
+import Masonry from '@mui/lab/Masonry';
 import { useNavigate } from 'react-router-dom';
+
+import BlogCard from '../components/BlogCard';
+import DefaultLayout from '../layouts/default';
+import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
+import { siteConfig } from '../config/site';
+import { NewsletterPopup } from '../components/Newsletter';
 
 const POSTS_PER_PAGE = 6;
 
@@ -38,36 +41,43 @@ export function Search({ onSearch }: { onSearch: (value: string) => void }) {
   );
 }
 
-
-
 export default function Blog() {
-
-  const [selectedCategory, setSelectedCategory] = useState<string>('All categories');
-  const [blogs, setBlogs] = useState(blogData); 
-  const [page, setPage] = useState(1);
+  const [blogs, setBlogs] = useState<any[]>([]);
+  const [filteredBlogs, setFilteredBlogs] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('All categories');
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [page, setPage] = useState(1);
+  const [showNewsletterPopup, setShowNewsletterPopup] = useState(false);
+
   const navigate = useNavigate();
+
   useEffect(() => {
-    let filtered = blogData;
-  
+    const fetchData = async () => {
+      const data = await fetchBlogDataFromAPI();
+      setBlogs(data);
+      setFilteredBlogs(data);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    let filtered = blogs;
+
     if (selectedCategory !== 'All categories') {
-      filtered = filtered.filter((blog:any) => blog.tag === selectedCategory);
+      filtered = filtered.filter(blog => blog.tag === selectedCategory);
     }
-  
+
     if (searchTerm.trim() !== '') {
-      filtered = filtered.filter((blog:any) =>
+      filtered = filtered.filter(blog =>
         blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         blog.description.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-  
-    setPage(1); // Reset to page 1 when filters change
-    setBlogs(filtered);
-  }, [searchTerm, selectedCategory]);
-  
-  
-    
+
+    setFilteredBlogs(filtered);
+    setPage(1);
+  }, [blogs, selectedCategory, searchTerm]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight;
@@ -78,84 +88,53 @@ export default function Blog() {
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const [showNewsletterPopup, setShowNewsletterPopup] = useState(false);
-
-
-    const handleClick = (category: string) => {
-      setSelectedCategory(category);
-      const filteredBlogs = category === 'All categories'
-        ? blogData
-        : blogData.filter((blog:any) => blog.tag === category);
-      setBlogs(filteredBlogs);
-    };
-
-
-  
-
-  const handleChange = (_: any, value: number) => {
-    setPage(value);
-  };
-
-  const paginatedPosts = blogs.slice(
+  const paginatedPosts = filteredBlogs.slice(
     (page - 1) * POSTS_PER_PAGE,
     page * POSTS_PER_PAGE
   );
-  
-  console.log('paginatedPosts', paginatedPosts);
 
   return (
-
     <DefaultLayout>
       {showNewsletterPopup && <NewsletterPopup />}
-      
-    <Box sx={{display: 'flex',flexDirection: { xs: 'column-reverse', md: 'row' },width: '100%',justifyContent: 'space-between',alignItems: { xs: 'start', md: 'center' },gap: 4,overflow: 'auto',py: 6 ,}}>
-          <Box sx={{display: 'inline-flex',flexDirection: 'row',gap: 3,overflow: 'auto',}}>
-          <Chip onClick={() => handleClick('All categories')} size="medium" label="All categories" variant={selectedCategory === 'All categories' ? 'filled' : 'outlined'} />
-            {siteConfig.categories.map((category, index) => (<Chip key={`${category}-${index}`} onClick={() => handleClick(category)} size="medium" label={category} variant={selectedCategory === category ? 'filled' : 'outlined'}/> ))}
-  
-          
-          </Box>
-          <Box sx={{ display: { xs: 'none', sm: 'flex' },flexDirection: 'row',gap: 1,width: { xs: '100%', md: 'fit-content' },overflow: 'auto',}}>
-          <Search onSearch={setSearchTerm} />
-            <IconButton size="small" aria-label="RSS feed">
-              <RssFeedRoundedIcon />
-            </IconButton>
-          </Box>
-    </Box>
 
-    { blogs.length === 0 && (
-        <Box sx={{ display: 'flex',flexDirection:'column', alignItems: 'center', gap: '30px', height: '10vh' }}>
-          <Typography variant='h3'>No blogs found</Typography>
-          <Button variant='outlined' onClick={() => {navigate('/blog')}}>Blog</Button>
-        </Box>
-      )}
-
-      
-      <Container sx={{ py: 6 }}>
-        <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
-          {paginatedPosts.map((post:any, index:number) => (
-            <div key={index}>
-              <BlogCard {...post}  />
-            </div>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', md: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'start', md: 'center' }, gap: 4, py: 6 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Chip label="All categories" variant={selectedCategory === 'All categories' ? 'filled' : 'outlined'} onClick={() => setSelectedCategory('All categories')} />
+          {siteConfig.categories.map((category) => (
+            <Chip key={category} label={category} variant={selectedCategory === category ? 'filled' : 'outlined'} onClick={() => setSelectedCategory(category)} />
           ))}
-        </Masonry>
-        <Pagination
-          count={Math.ceil(blogs.length / POSTS_PER_PAGE)}
-          page={page}
-          onChange={handleChange}
-          sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}
-        />
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Search onSearch={setSearchTerm} />
+          <IconButton aria-label="RSS feed"><RssFeedRoundedIcon /></IconButton>
+        </Box>
+      </Box>
 
-      </Container>
+      {filteredBlogs.length === 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, height: '10vh' }}>
+          <Typography variant="h5">No blogs found</Typography>
+          <Button variant="outlined" onClick={() => navigate('/blog')}>Go Back</Button>
+        </Box>
+      ) : (
+        <Container sx={{ py: 6 }}>
+          <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={3}>
+            {paginatedPosts.map((post, index) => (
+              <div key={index}>
+                <BlogCard {...post} />
+              </div>
+            ))}
+          </Masonry>
+          <Pagination
+            count={Math.ceil(filteredBlogs.length / POSTS_PER_PAGE)}
+            page={page}
+            onChange={(_, value) => setPage(value)}
+            sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}
+          />
+        </Container>
+      )}
     </DefaultLayout>
   );
 }
-      
-    
- 
