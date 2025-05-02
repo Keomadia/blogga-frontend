@@ -21,6 +21,7 @@ import DefaultLayout from '../layouts/default';
 import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import { siteConfig } from '../config/site';
 import { NewsletterPopup } from '../components/Newsletter';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
 
 const POSTS_PER_PAGE = 6;
 
@@ -47,6 +48,7 @@ export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState('All categories');
   const [searchTerm, setSearchTerm] = useState('');
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const [showNewsletterPopup, setShowNewsletterPopup] = useState(false);
 
   const navigate = useNavigate();
@@ -55,9 +57,12 @@ export default function Blog() {
     const fetchData = async () => {
       const data = await fetchBlogDataFromAPI();
       setBlogs(data);
-      setFilteredBlogs(data);
     };
     fetchData();
+    setTimeout(() => {
+      setLoading(false);
+    }, 4000);
+    
   }, []);
 
   useEffect(() => {
@@ -81,7 +86,7 @@ export default function Blog() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight;
-      const triggerPoint = document.body.scrollHeight * 0.6;
+      const triggerPoint = document.body.scrollHeight * 0.8;
       if (scrollPosition >= triggerPoint) {
         setShowNewsletterPopup(false);
       }
@@ -96,6 +101,7 @@ export default function Blog() {
     page * POSTS_PER_PAGE
   );
 
+  
   return (
     <DefaultLayout>
       {showNewsletterPopup && <NewsletterPopup />}
@@ -112,11 +118,11 @@ export default function Blog() {
           <IconButton aria-label="RSS feed"><RssFeedRoundedIcon /></IconButton>
         </Box>
       </Box>
-
-      {filteredBlogs.length === 0 ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, height: '10vh' }}>
-          <Typography variant="h5">No blogs found</Typography>
-          <Button variant="outlined" onClick={() => navigate('/blog')}>Go Back</Button>
+      { loading ? <LoadingSkeleton skeletonType='default'/>
+      : filteredBlogs.length === 0 ? (
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, height: '20vh' }}>
+          <Typography variant="h5">No blogs found for {selectedCategory}</Typography>
+          <Button variant="outlined" onClick={() => setSelectedCategory('All categories')}>Blog</Button>
         </Box>
       ) : (
         <Container sx={{ py: 6 }}>

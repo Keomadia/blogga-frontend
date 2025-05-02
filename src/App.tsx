@@ -14,6 +14,7 @@ import { IconButton } from '@mui/material';
 
 function App() {
   const [showButton, setShowButton] = useState(false);
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,10 +31,13 @@ function App() {
     };
   }, []);
 
+  
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  
   return (
     <>
       <Routes>
@@ -50,7 +54,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-      </Routes>
+      </Routes> 
 
       {showButton && (
          <IconButton onClick={scrollToTop} sx={{ position: 'fixed', bottom: 16, right: 16, backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}>
@@ -58,7 +62,7 @@ function App() {
          </IconButton>
            
          )}
-
+ 
     </>
 )}
 

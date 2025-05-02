@@ -11,9 +11,9 @@ export default function LogoText({ varian}: LogoTextProps) {
     const fontFamily = "Gluten";
 
     return (
-        <Box display="flex" alignItems="center">
+        <Box display="flex" alignItems="center" sx={{ color:"#57b0e1", fontWeight: 900 }}>
             <SignalCellularAltIcon sx={{ marginRight: 1, fontSize: '2.5rem' }} />
-            <Typography variant={varian}  sx={{ fontFamily: fontFamily, display: 'inline', fontSize: '3rem' }}>BloggA</Typography>
+            <Typography variant={varian}  sx={{  fontFamily: fontFamily, display: 'inline', fontSize: '3rem' }}>BloggA</Typography>
         </Box>
     );
 }

@@ -8,8 +8,7 @@ import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
-
-
+import { LoadingSkeleton } from './LoadingSkeleton';
 const StyledTypography = styled(Typography)({
   display: '-webkit-box',
   WebkitBoxOrient: 'vertical',
@@ -55,97 +54,102 @@ const TitleTypography = styled(Typography)(() => ({
   },
 }));
 
+const SyledGrid = styled(Grid)(() => ({
+  border: '2px solid rgba(0, 0, 0, 0.1)',
+  '&:hover': {
+    cursor: 'pointer',
+    boxShadow: '20px 20px 60px rgba(214, 168, 168, 0.1)',
+    transition: 'all 0.3s ease-in-out',
+    transform : 'scale(1.01)',
+  },
+  '&:focus-visible': {
+    outline: '1px solid',
+    outlineColor: 'hsla(209, 35.60%, 29.20%, 0.50)',
+    outlineOffset: '2px',
+  },
+}));
 
 export default function Latest() {
   const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(
     null,
   );
-  const [blogData, setBlogData] = useState<any>(null);
+  const [_, setBlogData] = useState<any>(null);
+  const [articles, setArticles] = useState<any>(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(true);
   const handleFocus = (index: number) => {
     setFocusedCardIndex(index);
   };
   const handleBlur = () => {
     setFocusedCardIndex(null);
   };
-  const SyledGrid = styled(Grid)(() => ({
-    border: '2px solid rgba(0, 0, 0, 0.1)',
-    '&:hover': {
-      cursor: 'pointer',
-      boxShadow: '20px 20px 60px rgba(214, 168, 168, 0.1)',
-      transition: 'all 0.3s ease-in-out',
-      transform : 'scale(1.01)',
-    },
-    '&:focus-visible': {
-      outline: '1px solid',
-      outlineColor: 'hsla(209, 35.60%, 29.20%, 0.50)',
-      outlineOffset: '2px',
-    },
-  }));
+  
     React.useEffect(() => {
       const fetchData = async () => {
         const data = await fetchBlogDataFromAPI();
         setBlogData(data);
-      };
+        setArticles(data.slice(0, 7));}
       fetchData();
+      setTimeout(() => {setLoading(false);}, 1200);
     }, []);
 
-  const articles = blogData.slice(0, 7);
 
   return (
-    <div>
-      <Typography variant="h2" gutterBottom>
-        Recommended
-      </Typography>
-      <Grid container spacing={8} columns={12} sx={{ my: 4 }}>
-        {articles.map((article:any, index:number) => (
-          <SyledGrid key={index} size={{ xs: 12, sm: 6 }} onClick={() => navigate(`/blog/${article.id}`)}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: 1,
-                height: '100%',
-                boxShadow: '20px 20px 60px rgba(0, 0, 0, 0.1)',
-                padding: '10px',
-              }}
-            >
-              <Typography gutterBottom variant="caption" component="div">
-                {article.tag}
-              </Typography>
-                <TitleTypography
-                gutterBottom
-                variant="h6"
-                onClick={() => navigate('/blog')}
-                onFocus={() => handleFocus(index)}
-                onBlur={handleBlur}
-                tabIndex={0}
-                className={focusedCardIndex === index ? 'Mui-focused' : ''}
+    <>
+      <div>
+          <Typography variant="h3" gutterBottom>{articles && 'Recommended'}</Typography>
+          <Grid container spacing={8} columns={12} sx={{ my: 1 }}>
+          { loading ? <LoadingSkeleton skeletonType='latest'/>
+              : articles && ( articles.map((article:any, index:number) => (
+              <SyledGrid key={index} size={{ xs: 12, sm: 6 }} onClick={() => navigate(`/blog/${article.id}`)}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: 1,
+                    height: '100%',
+                    boxShadow: '20px 20px 60px rgba(0, 0, 0, 0.1)',
+                    padding: '10px',
+                  }}
                 >
-                {article.title}
-                <NavigateNextRoundedIcon
-                  className="arrow"
-                  sx={{ fontSize: '1rem' }}
-                />
-                </TitleTypography>
-              <StyledTypography variant="body2" color="text.secondary" gutterBottom>
-                {article.description}
-              </StyledTypography>
+                  <Typography gutterBottom variant="caption" component="div">
+                    {article.tag}
+                  </Typography>
+                    <TitleTypography
+                    gutterBottom
+                    variant="h6"
+                    onClick={() => navigate('/blog')}
+                    onFocus={() => handleFocus(index)}
+                    onBlur={handleBlur}
+                    tabIndex={0}
+                    className={focusedCardIndex === index ? 'Mui-focused' : ''}
+                    >
+                    {article.title}
+                    <NavigateNextRoundedIcon
+                      className="arrow"
+                      sx={{ fontSize: '1rem' }}
+                    />
+                    </TitleTypography>
+                  <StyledTypography variant="body2" color="text.secondary" gutterBottom>
+                    {article.description}
+                  </StyledTypography>
 
-              <Box sx={{ display: 'flex',flexDirection: 'row',gap: 2,alignItems: 'center',justifyContent: 'space-between',padding: '16px', }}>
-              <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
-                <Avatar sx={{ width: 24, height: 24 }}>{article.authors.charAt(0).toUpperCase()}</Avatar>
-                <Typography variant="caption">{article.authors}</Typography>
-              </Box>
-              <Typography variant="caption">{article.date}</Typography>
-            </Box>
-            </Box>
-          </SyledGrid>
-        ))}
-      </Grid>
-      <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
-      </Box>
-    </div>
+                  <Box sx={{ display: 'flex',flexDirection: 'row',gap: 2,alignItems: 'center',justifyContent: 'space-between',padding: '16px', }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, alignItems: 'center' }}>
+                    <Avatar sx={{ width: 24, height: 24 }}>{article.authors.charAt(0).toUpperCase()}</Avatar>
+                    <Typography variant="caption">{article.authors}</Typography>
+                  </Box>
+                  <Typography variant="caption">{article.date}</Typography>
+                </Box>
+                </Box>
+              </SyledGrid>
+            )))}
+          </Grid>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 4 }}>
+          </Box>
+        </div>
+  
+    </>
   );
 }

@@ -7,12 +7,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
+const API_URL = 'https://blogga-flask-app.onrender.com';
 
 export function NewsletterPopup() {
     const [open, setOpen] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
-    const API_URL = process.env.REACT_APP_API_URL;
+    // const API_URL = process.env.REACT_APP_API_URL;
+    ;
     const handleClose = () => {
         setOpen(false);
     };
@@ -100,7 +102,8 @@ const Newsletter: React.FC = () => {
         setError("")
         setSuccessMessage("")
         try {
-            const response = await axios.post('`${API_URL}/api/blog/subscribe', { email });
+            
+            const response = await axios.post(`${API_URL}/api/blog/subscribe`, { email });
             
             if (response.status === 201) {
                 setSuccessMessage("Successfully Subscribed")
@@ -110,7 +113,7 @@ const Newsletter: React.FC = () => {
             }
             
         } catch (err: any) {
-            console.log(email)
+            console.error()
             setError(err.response?.data?.error || `An error occurred`);
         }
     };

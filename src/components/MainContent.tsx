@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import { Skeleton } from '@mui/material';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -19,6 +20,8 @@ import LogoText from '../components/LogoText';
 import {siteConfig} from '../config/site';
 import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import { useNavigate } from 'react-router';
+import { LoadingSkeleton } from '../components/LoadingSkeleton'
+
 
 function getRandomBlogs(blogData: any[], count: number): any[] {
   const shuffled = [...blogData].sort(() => 0.5 - Math.random());
@@ -87,55 +90,79 @@ export function Search({ onSearch }: { onSearch: (value: string) => void }) {
 export default function MainContent() {
   const [selectedCategory, setSelectedCategory] = React.useState<string>('All categories');
   const [blogData, setBlogData] = React.useState<any[]>([]);
+  const [randomBlogs, setRandomBlogs] = React.useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [loading, setLoading] = React.useState(true);
+  const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(null);
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     const fetchData = async () => {
       const data = await fetchBlogDataFromAPI();
       setBlogData(data);
+      setRandomBlogs(getRandomBlogs(data, 6));
     };
     fetchData();
+    setTimeout(() => {
+      setLoading(false);
+    }, 1200);
+    
   }, []);
-
-
-  const [randomBlogs, setRandomBlogs] = React.useState(getRandomBlogs(blogData, 6));
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [filteredBlogs, setFilteredBlogs] = React.useState(blogData);
-  const [focusedCardIndex, setFocusedCardIndex] = React.useState<number | null>(null,);
-
-  const navigate = useNavigate();
 
   React.useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (searchTerm.trim() === '') {
-        setFilteredBlogs(blogData);
-        setRandomBlogs(getRandomBlogs(blogData, 6));
+        const filteredBlogs = selectedCategory === 'All categories'
+          ? blogData
+          : blogData.filter((blog: any) => blog.tag === selectedCategory);
+        setRandomBlogs(getRandomBlogs(filteredBlogs, 6));
       } else {
-        const filtered = blogData.filter((blog:any) =>
+        const filtered = blogData.filter((blog: any) =>
           blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
           blog.description.toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setFilteredBlogs(filtered);
-        setRandomBlogs(getRandomBlogs(filteredBlogs, 6));
+        const filteredByCategory = selectedCategory === 'All categories'
+          ? filtered
+          : filtered.filter((blog: any) => blog.tag === selectedCategory);
+        setRandomBlogs(getRandomBlogs(filteredByCategory, 6));
       }
-    }, 500); 
-  
+    }, 500);
+
     return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
-  
+  }, [searchTerm, selectedCategory, blogData]);
 
-  
+  const handleFocus = (index: number) => {
+    setFocusedCardIndex(index);
+  };
 
-  const handleFocus = (index: number) => {setFocusedCardIndex(index);};
-  const handleBlur = () => {setFocusedCardIndex(null);};
+  const handleBlur = () => {
+    setFocusedCardIndex(null);
+  };
+
   const handleClick = (category: string) => {
     setSelectedCategory(category);
     const filteredBlogs = category === 'All categories'
       ? blogData
-      : blogData.filter((blog:any) => blog.tag === category);
+      : blogData.filter((blog: any) => blog.tag === category);
     setRandomBlogs(getRandomBlogs(filteredBlogs, 6));
   };
-  
 
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <div><LogoText varian="h1" /></div>
+  
+        <Box sx={{display: { xs: 'flex', sm: 'none' },flexDirection: 'row',gap: 1,width: { xs: '100%', md: 'fit-content' },overflow: 'auto',}}>
+          <Search onSearch={setSearchTerm} />
+          <IconButton size="small" aria-label="RSS feed" />
+        </Box>  
+        <LoadingSkeleton skeletonType='main'/>
+      </Box>
+    );
+  }
+  
+  
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4  }}>
       <div>
