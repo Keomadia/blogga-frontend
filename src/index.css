@@ -1,0 +1,12 @@
+:root {
+  font-family: 'Montserrat', Avenir, Helvetica, Arial, sans-serif;
+  line-height: 2;
+  font-weight: 500;
+  color: #333;
+  background-color: #f3f2f2de;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

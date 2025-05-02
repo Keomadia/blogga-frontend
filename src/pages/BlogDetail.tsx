@@ -1,0 +1,263 @@
+import React, { useState, memo ,useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { Box, Container, Typography } from '@mui/material';
+import CardMedia from '@mui/material/CardMedia';
+// import {  IconButton } from '@mui/material';
+// import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+// import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { blogData } from '../data/blogData'; 
+import DefaultLayout from '../layouts/default';
+import ShareButton from '../components/ShareButton';
+
+export default function BlogDetail() {
+    const { id } = useParams<{ id: string }>();
+    const API_URL = process.env.REACT_APP_API_URL;
+    const blog = blogData.find((b:any) => b.id === parseInt(id || '', 10));
+    const VideoFrame = memo(({ video, title }: { video: string; title: string }) => {
+        return (
+          <Box sx={{ position: 'relative', pt: '56.25%', width: '100%', borderRadius: 2, mb: 2 }}>
+            <CardMedia
+              component="iframe"
+              src={video}
+              title={title}
+              allowFullScreen
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 0,
+                borderRadius: 2,
+              }}
+            />
+          </Box>
+        );
+      });
+      
+
+
+    if (!blog) {
+        return <Typography variant="h5">Blog not found</Typography>;
+    }
+
+    // const [likes, setLikes] = useState(blog.likes);
+    // const [dislikes, setDislikes] = useState(blog.dislikes);
+
+    // const updateBlogData = async (updatedData: { likes?: number; dislikes?: number }) => {
+    //     try {
+    //         await fetch(``${API_URL}/api/blog/update/${blog.id}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(updatedData),
+    //         });
+    //     } catch (error) {
+    //         console.error('Error updating blog data:', error);
+    //     }
+    // };
+
+    // const handleLike = async (e: React.MouseEvent) => {
+    //     e.preventDefault();
+    
+    //     const alreadyLiked = likes > blog.likes;
+    //     const alreadyDisliked = dislikes > blog.dislikes;
+    
+    //     const newLikes = alreadyLiked ? likes - 1 : likes + 1;
+    //     const newDislikes = alreadyDisliked && !alreadyLiked ? dislikes - 1 : dislikes;
+    
+    //     setLikes(newLikes);
+    //     if (alreadyDisliked && !alreadyLiked) setDislikes(newDislikes);
+    
+    //     await updateBlogData({ likes: newLikes, dislikes: newDislikes });
+    // };
+    
+    // const handleDislike = async (e: React.MouseEvent) => {
+    //     e.preventDefault();
+    
+    //     const alreadyDisliked = dislikes > blog.dislikes;
+    //     const alreadyLiked = likes > blog.likes;
+    
+    //     const newDislikes = alreadyDisliked ? dislikes - 1 : dislikes + 1;
+    //     const newLikes = alreadyLiked && !alreadyDisliked ? likes - 1 : likes;
+    
+    //     setDislikes(newDislikes);
+    //     if (alreadyLiked && !alreadyDisliked) setLikes(newLikes);
+    
+    //     await updateBlogData({ dislikes: newDislikes, likes: newLikes });
+    // };
+    
+    const [views, setViews] = useState(blog.views);
+
+    
+    useEffect(() => {
+        const incrementViews = async () => {
+            try {
+                const updatedViews = views + 1;
+                await fetch(`${API_URL}/api/blog/update/${blog.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ views: updatedViews }),
+                });
+                setViews(updatedViews);
+            } catch (error) {
+                console.error('Error updating views:', error);
+            }
+        };
+    
+        incrementViews();
+        
+    }, []);
+    
+    return (
+        <DefaultLayout>
+            <Box sx={{ p: 4 }}>
+            <CardMedia component="img"
+                image={blog.media}
+                alt={blog.title}
+                sx={{
+                    borderRadius: 2,
+                    mb: 2,
+                    width: '100%',
+                    maxHeight: 400,
+                    objectFit: 'cover',
+                }}
+                />
+
+                <Typography variant="h3" fontWeight={600} gutterBottom sx={{  fontSize: { xs:'1.6rem',md:'2rem'} }}>
+                {blog.title}
+                </Typography>
+
+                <Typography variant="subtitle1" gutterBottom sx={{ fontSize: { xs:'0.8rem',md:'1.1rem'}, color: 'text.secondary' }}>
+                Written by {blog.authors} • {blog.date}
+                </Typography>
+
+                {blog.sections.map((section:any, index:number) => (
+                    <React.Fragment>
+                        
+                    <Box key={index} sx={{ mt: 4 }}>
+                        {section.title && (
+                            <Typography variant="h5" fontWeight={600} gutterBottom sx={{ fontSize: { xs:'1.3rem',md:'1.5rem' }}}>
+                                {section.title}
+                            </Typography>
+                            )}
+
+                        {section.image && (
+                            <Box sx={{ position: 'relative', mb: 2 }}>
+                                <CardMedia
+                                component="img"
+                                image={section.image}
+                                title={`${section.title} image`}
+                                alt={`${section.title} image`}
+                                
+                                sx={{
+                                    borderRadius: 2,
+                                    width: '100%',
+                                    maxHeight: 300,
+                                    objectFit: 'cover',
+                                    position: 'relative',
+                                    zIndex: 2,
+                                }}
+                                />
+                                <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundImage: `url(${section.image})`,
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    filter: 'blur(10px)',
+                                    zIndex: 1,
+                                    borderRadius: 2,
+                                }}
+                                />
+                            </Box>
+                        )}
+
+                        <Typography variant="body1" sx={{ fontSize: { xs:'1.1rem',md:'1.3rem' } }}>
+                            {section.content}
+                        </Typography>
+
+                        {section.list && (
+                            <Box component="section" >
+                                {section.list.map((item:any, idx:number) => (
+                                    <Box key={idx} component="section" sx={{ mb: 2 }}>
+                                        {Object.entries(item).map(([key, value]) => (
+                                            <Container key={key}>
+                                                {value.length > 60 ? (
+                                                        <>
+                                                            <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs:'1.1rem',md:'1.3rem' } }}>
+                                                                {key}
+                                                            </Typography>
+                                                            <Typography variant="body1" sx={{ mb: 2, fontSize: { xs:'1rem',md:'1.1rem' } }}>
+                                                                {value}
+                                                            </Typography>
+                                                        </>
+                                                    ) : (
+                                                        
+                                                        <Box sx={{display : "inline"}}>
+                                                            <Typography variant="h6" sx={{ display: 'inline', fontSize: { xs:'1rem',md:'1.3rem' }, fontWeight: 600 }}>
+                                                                {key}
+                                                            </Typography>
+                                                            <Typography variant="body1" sx={{ display: 'inline',mb: 2,fontSize: { xs:'0.9rem',md:'1.2rem' } }}>
+                                                                : {value}
+                                                            </Typography>
+                                                        </Box>
+                                                    )}
+                                                </Container>
+                                        ))}
+                                    </Box>
+                                ))}
+                            </Box>
+                        )}
+                    </Box>
+
+                    </React.Fragment>
+                ))}
+
+              {blog.video && (
+                <VideoFrame video={blog.video} title={blog.title} />
+                )}
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 4 }}>
+                {/* <IconButton 
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation(); 
+                        e.preventDefault(); 
+                        handleLike(e);
+                    }}
+                >
+                    <ThumbUpAltIcon />
+                </IconButton>
+                <Typography>{likes}</Typography>
+                <IconButton 
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        handleDislike(e);
+                    }}
+                >
+                    <ThumbDownAltIcon />
+                </IconButton>
+
+                    <Typography>{dislikes}</Typography> */}
+
+                    <VisibilityIcon />
+                    <Typography>{views}</Typography>
+
+                    <ShareButton description={blog.description} id={blog.id} title={blog.title} />
+                </Box>
+            </Box>
+        </DefaultLayout>
+    );
+}
+
