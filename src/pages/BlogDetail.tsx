@@ -16,7 +16,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-
+import Container from '@mui/material/Container';	
 
     
 const VideoFrame = memo(({ video, title }: { video: string; title: string }) => {
@@ -280,39 +280,61 @@ export default function BlogDetail() {
                 </Typography>
                 )}
 
-                {/* List Items */}
-                {section.list && (
-                    <Box component="ul" sx={{ pl: 2 }}>
-                    {section.list.map((item: any, idx: number) => (
-                        <Box key={idx} component="li" sx={{ mb: 2 }}>
-                        {Object.entries(item).map(([key, value]) => {
-                            const stringValue = String(value);
-                            return (
-                            <Box key={key} sx={{ mb: 1 }}>
-                                <Typography
-                                component="span"
-                                variant="h6"
-                                sx={{
-                                    fontSize: { xs: '1rem', md: '1.2rem' },
-                                    fontWeight: 600,
-                                }}
-                                >
-                                {key}:{' '}
-                                </Typography>
-                                <Typography
-                                component="span"
-                                variant="body1"
-                                sx={{ fontSize: { xs: '1rem', md: '1.2rem' } }}
-                                >
-                                {stringValue}
-                                </Typography>
-                            </Box>
-                            );
-                        })}
-                        </Box>
-                    ))}
-                    </Box>
-                )}
+{section.list && (
+                            <>
+                                {section.list.map((item:any, idx:number) => (
+                                    <Box key={idx} component="section" sx={{ mt: 1 }}>
+                                        {Object.entries(item).map(([key, value]) => {
+                                            const stringValue = String(value); 
+                                            return (
+                                                <Container key={key}>
+                                                    {stringValue.length > 60 ? (
+                                                        <>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', md: '1.3rem' } }}
+                                                            >
+                                                                {key}
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{ mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}
+                                                            >
+                                                                {stringValue}
+                                                            </Typography>
+                                                        </>
+                                                    ) : (
+                                                        <Box sx={{ display: 'inline' }}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{
+                                                                    display: 'inline',
+                                                                    fontSize: { xs: '1rem', md: '1.3rem' },
+                                                                    fontWeight: 600,
+                                                                }}
+                                                            >
+                                                                {key}
+                                                            </Typography>
+                                                            <Typography
+                                                                variant="body1"
+                                                                sx={{
+                                                                    display: 'inline',
+                                                                    mb: 2,
+                                                                    fontSize: { xs: '0.9rem', md: '1.2rem' },
+                                                                }}
+                                                            >
+                                                                : {stringValue}
+                                                            </Typography>
+                                                        </Box>
+                                                    )}
+                                                </Container>
+                                            );
+                                        })}
+
+                                    </Box>
+                                ))}
+                            </>
+                        )}
                 </Box>
             ))}
 
