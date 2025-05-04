@@ -67,5 +67,16 @@ export const siteConfig = {
     linkedin: "https://www.linkedin.com/in/keomadi-anyankah-1723a5306/",
     discord: "https://discord.gg/",
   },
-  categories : ['Tech', 'Creativity', 'Life', 'Startup']
+  categories: [
+    'Tech',
+    'Lifestyle',
+    'Health',
+    'Education',
+    'Travel',
+    'Finance',
+    'Food',
+    'Entertainment',
+    'Sports',
+    'Culture',
+  ],
 };

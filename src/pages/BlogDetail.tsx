@@ -268,8 +268,7 @@ export default function BlogDetail() {
                 )}
 
 
-                {/* Section Content */}
-                <Typography
+                {section.content &&( <Typography
                     variant="body1"
                     sx={{
                     fontSize: { xs: '1.1rem', md: '1.25rem' },
@@ -279,6 +278,7 @@ export default function BlogDetail() {
                 >
                     {section.content}
                 </Typography>
+                )}
 
                 {/* List Items */}
                 {section.list && (
