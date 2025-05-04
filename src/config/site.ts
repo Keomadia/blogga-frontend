@@ -68,7 +68,6 @@ export const siteConfig = {
     discord: "https://discord.gg/",
   },
   categories: [
-    'Tech',
     'Programming',
     'Lifestyle',
     'Health',
@@ -77,6 +76,5 @@ export const siteConfig = {
     'Finance',
     'Food',
     'Entertainment',
-    'Sports',
   ],
 };

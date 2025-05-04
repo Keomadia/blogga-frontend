@@ -280,55 +280,55 @@ export default function BlogDetail() {
                 </Typography>
                 )}
 
-{section.list && (
+                    {section.list && (
                             <>
                                 {section.list.map((item:any, idx:number) => (
                                     <Box key={idx} component="section" sx={{ mt: 1 }}>
                                         {Object.entries(item).map(([key, value]) => {
-                                            const stringValue = String(value); 
-                                            return (
-                                                <Container key={key}>
-                                                    {stringValue.length > 60 ? (
-                                                        <>
-                                                            <Typography
-                                                                variant="h6"
-                                                                sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', md: '1.3rem' } }}
-                                                            >
-                                                                {key}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body1"
-                                                                sx={{ mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}
-                                                            >
-                                                                {stringValue}
-                                                            </Typography>
-                                                        </>
-                                                    ) : (
-                                                        <Box sx={{ display: 'inline' }}>
-                                                            <Typography
-                                                                variant="h6"
-                                                                sx={{
-                                                                    display: 'inline',
-                                                                    fontSize: { xs: '1rem', md: '1.3rem' },
-                                                                    fontWeight: 600,
-                                                                }}
-                                                            >
-                                                                {key}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body1"
-                                                                sx={{
-                                                                    display: 'inline',
-                                                                    mb: 2,
-                                                                    fontSize: { xs: '0.9rem', md: '1.2rem' },
-                                                                }}
-                                                            >
-                                                                : {stringValue}
-                                                            </Typography>
-                                                        </Box>
-                                                    )}
-                                                </Container>
-                                            );
+                                        const stringValue = String(value); 
+                                        return (
+                                            <Box key={key}>
+                                                {stringValue.length > 60 ? (
+                                                    <>
+                                                        <Typography
+                                                            variant="h6"
+                                                            sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', md: '1.5rem',mt:1 } }}
+                                                        >
+                                                            {key}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            sx={{ mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}
+                                                        >
+                                                            {stringValue}
+                                                        </Typography>
+                                                    </>
+                                                ) : (
+                                                    <Box sx={{ display: 'inline' }}>
+                                                        <Typography
+                                                            variant="h6"
+                                                            sx={{
+                                                                display: 'inline',
+                                                                fontSize: { xs: '1rem', md: '1.3rem' },
+                                                                fontWeight: 600,
+                                                            }}
+                                                        >
+                                                            {key}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body1"
+                                                            sx={{
+                                                                display: 'inline',
+                                                                mb: 2,
+                                                                fontSize: { xs: '0.9rem', md: '1.2rem' },
+                                                            }}
+                                                        >
+                                                            : {stringValue}
+                                                        </Typography>
+                                                    </Box>
+                                                )}
+                                            </Box>
+                                        );
                                         })}
 
                                     </Box>
