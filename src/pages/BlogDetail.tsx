@@ -57,15 +57,24 @@ export default function BlogDetail() {
     useEffect(() => {
         const loadBlogs = async () => {
             const data = await fetchBlogDataFromAPI();
-            setBlogData(data);
-            const foundBlog = data.find((b: any) => b.id === parseInt(id || '', 10));
+    
+            const sortedData = data.map((blog: any) => ({
+                ...blog,
+                sections: blog.sections?.sort((a: any, b: any) => a.id - b.id),
+            }));
+    
+            setBlogData(sortedData);
+    
+            const foundBlog = sortedData.find((b: any) => b.id === parseInt(id || '', 10));
             setBlog(foundBlog);
             if (foundBlog) setViews(foundBlog.views);
+    
             setLoading(false);
         };
+    
         loadBlogs();
     }, [id]);
-
+    
     useEffect(() => {
         const incrementViews = async () => {
             if (!blog) return;
