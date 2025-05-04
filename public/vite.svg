@@ -1,8 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
 
- <svg width="32" height="32" viewBox="0 0 256 257" xmlns="http://www.w3.org/2000/svg">
-  <path fill="#4dabdf" d="M2 10h4v4H2z" />
-  <path fill="#4dabdf" d="M8 8h4v6H8z" />
-  <path fill="#4dabdf" d="M14 6h4v8h-4z" />
-  <path fill="#4dabdf" d="M20 4h4v10h-4z" />
-  <text x="30" y="20" font-family="Gluten, sans-serif" font-size="30" fill="#4dabdf">B</text>
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4dabdf;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0056b3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="100" fill="url(#blueGradient)" />
+
+  <g transform="translate(35, 60) scale(1.8)">
+    <rect x="0" y="30" width="4" height="10" fill="white" rx="1" />
+    <rect x="8" y="20" width="4" height="20" fill="white" rx="1" />
+    <rect x="16" y="10" width="4" height="30" fill="white" rx="1" />
+    <rect x="24" y="0"  width="4" height="40" fill="white" rx="1" />
+  </g>
+
+  <text x="110" y="130" fill="white" font-size="85" font-weight="bold" font-family="'Gluten', sans-serif">
+    B
+  </text>
 </svg>
