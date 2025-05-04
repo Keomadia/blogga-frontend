@@ -25,7 +25,7 @@ const About: React.FC = () => {
               A little corner of the web built by Keoma for thoughts, tech takes, and a whole lot of personality.
             </Typography>
             <Typography variant="body1" sx={{ color: "#555", textAlign: "justify", mb: 2, fontSize: { xs: "0.9rem", md: "1rem" } }}>
-              Keoma is an <strong>Entrepreneur</strong>, <strong>Software developer</strong>, and a proud member of the
+              Keoma is an <strong>Aspiring Software engineer</strong>, and a proud member of the
               "I’m gonna be a billionaire one day" club. BloggA is his digital journal — sprinkled with code, creativity, and random brilliance.
             </Typography>
             <Typography variant="body1" sx={{ color: '#555', textAlign: 'justify', mb: 2, fontSize: { xs: "0.9rem", md: "1rem" } }}>
