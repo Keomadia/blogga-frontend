@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import BlogDetail from "./pages/BlogDetail";
+import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./pages/ProtectedRoute";
 import { useState, useEffect } from "react";
 import { ArrowUpwardRounded } from '@mui/icons-material';
@@ -46,6 +47,9 @@ function App() {
         <Route element={<About />} path="/about" />
         <Route element={<Login />} path="/login" />
         <Route element={<Register />} path="/register" />
+
+        <Route path="*" element={<NotFound />} />
+
         <Route
           path="/blog/:id"
           element={
