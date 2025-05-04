@@ -69,6 +69,7 @@ export const siteConfig = {
   },
   categories: [
     'Tech',
+    'Programming',
     'Lifestyle',
     'Health',
     'Education',
@@ -77,6 +78,5 @@ export const siteConfig = {
     'Food',
     'Entertainment',
     'Sports',
-    'Culture',
   ],
 };
