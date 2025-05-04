@@ -9,6 +9,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { fetchBlogDataFromAPI } from '../data/fetchBlogDataFromAPI'; 
 import DefaultLayout from '../layouts/default';
 import ShareButton from '../components/ShareButton';
+import { Loader } from '../components/Loader';
+import { ErrorPage } from '../components/ErrorPage';
 
 
     
@@ -42,6 +44,7 @@ export default function BlogDetail() {
     const [_, setLoading] = useState(true);
     const [, setBlogData] = useState([]);
     const [blog, setBlog] = useState<any>(null);
+    const [showError, setShowError] = useState(false);
     const [views, setViews] = useState(0);
     useEffect(() => {
         const loadBlogs = async () => {
@@ -74,9 +77,36 @@ export default function BlogDetail() {
         incrementViews();
     }, [blog]);
 
-    if (!blog) {
-        return <Typography variant="h5">Blog not found</Typography>;
+
+    useEffect(() => {
+        if (blog?.title) {
+            document.title = blog.title;
+        }
+    }, [blog]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (!blog) {
+                setShowError(true);
+            }
+        }, 15000); 
+
+
+        if (blog) {
+            clearTimeout(timer);
+        }
+
+        return () => clearTimeout(timer);
+    }, [blog]);
+
+    if (showError && !blog) {
+        return <ErrorPage />;
     }
+
+    if (!blog) {
+        return <Loader />;
+    }
+
 
 
 
@@ -206,9 +236,9 @@ export default function BlogDetail() {
                         </Typography>
 
                         {section.list && (
-                            <Box component="section" >
+                            <>
                                 {section.list.map((item:any, idx:number) => (
-                                    <Box key={idx} component="section" sx={{ mb: 2 }}>
+                                    <Box key={idx} component="section" sx={{ mt: 1 }}>
                                         {Object.entries(item).map(([key, value]) => {
                                             const stringValue = String(value); 
                                             return (
@@ -258,7 +288,7 @@ export default function BlogDetail() {
 
                                     </Box>
                                 ))}
-                            </Box>
+                            </>
                         )}
                     </Box>
 

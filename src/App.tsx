@@ -11,9 +11,12 @@ import ProtectedRoute from "./pages/ProtectedRoute";
 import { useState, useEffect } from "react";
 import { ArrowUpwardRounded } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
+import { useGoogleRedirectHandler } from './hooks/useGoogleRedirectHandler';
+
 
 
 function App() {
+  useGoogleRedirectHandler();
   const [showButton, setShowButton] = useState(false);
   
 
