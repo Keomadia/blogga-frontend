@@ -20,14 +20,24 @@ export function NewsletterPopup() {
     };
 
     const handleSubscribe = async (email: string) => {
+        setError("");
+        setSuccessMessage("");
+        
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!isValidEmail) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+    
         try {
             const response = await axios.post(`${API_URL}/api/blog/subscribe`, { email });
+    
             if (response.status === 201) {
-                setSuccessMessage("Successfully Subscribed")
-                
+                setSuccessMessage("Successfully Subscribed");
             } else if (response.status === 200) {
-                setSuccessMessage("Already a Subscriber Thanks")
+                setSuccessMessage("Already a Subscriber Thanks");
             }
+    
             setTimeout(() => {
                 handleClose();
             }, 1000);
@@ -35,6 +45,7 @@ export function NewsletterPopup() {
             setError(err.response?.data?.error || 'An error occurred');
         }
     };
+    
 
     return (
         <React.Fragment>
@@ -99,26 +110,29 @@ const Newsletter: React.FC = () => {
     const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
     const handleSubscribeAgain = async () => {
-        setError("")
-        setSuccessMessage("")
+        setError("");
+        setSuccessMessage("");
+    
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if (!isValidEmail) {
+            setError("Please enter a valid email address.");
+            return;
+        }
+    
         try {
-            
             const response = await axios.post(`${API_URL}/api/blog/subscribe`, { email });
-            
+    
             if (response.status === 201) {
-                setSuccessMessage("Successfully Subscribed")
-                
+                setSuccessMessage("Successfully Subscribed");
             } else if (response.status === 200) {
-                setSuccessMessage("Already a Subscriber Thanks")
+                setSuccessMessage("Already a Subscriber Thanks");
             }
-            
         } catch (err: any) {
-            console.error()
+            console.error();
             setError(err.response?.data?.error || `An error occurred`);
         }
     };
-
-
+    
     return (
         <Box sx={{ width: { xs: '100%', sm: '60%' } }}>
             
@@ -137,6 +151,7 @@ const Newsletter: React.FC = () => {
                     size="small"
                     variant="outlined"
                     fullWidth
+                    type="email"
                     placeholder="Your email address"
                     sx={{ width: '250px' }}
                     value={email}
