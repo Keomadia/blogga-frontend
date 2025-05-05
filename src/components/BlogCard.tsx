@@ -18,18 +18,35 @@ interface BlogCardProps {
 }
 
 
-const BlogCard: React.FC<BlogCardProps> = ({ title, description, id, tag,media=null }) => {
+const   BlogCard: React.FC<BlogCardProps> = ({ title, description, id, tag,media=null }) => {
   const navigate = useNavigate();
   const handleLearnMore = () => navigate(`/blog/${id}`);
   return (
-        <Card sx={{ width: '100%', borderRadius: 2, boxShadow: 3 }}>
+    <Card
+    sx={{
+      width: '100%',
+      minHeight: 300,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      borderRadius: 2,
+      boxShadow: 3,
+    }}
+  >
+  
         {media && (
-            <CardMedia
-            component="img"
-            image={media}
-            alt={title}
-            sx={{ width: '100%', borderRadius: 1 }}
-            />
+          <CardMedia
+          component="img"
+          image={media}
+          alt={title}
+          sx={{
+            width: '100%',
+            height: 140,
+            objectFit: 'cover',
+            borderRadius: 1,
+          }}
+        />
+        
         )}
         <CardContent>
             <Typography
@@ -42,9 +59,19 @@ const BlogCard: React.FC<BlogCardProps> = ({ title, description, id, tag,media=n
             <Typography gutterBottom variant="h6" component="div">
             {title}
             </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+            <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+            }}
+          >
             {description}
-            </Typography>
+          </Typography>
+
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <ShareButton description={description} id={id} title={title}/>
