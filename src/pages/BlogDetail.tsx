@@ -299,12 +299,12 @@ export default function BlogDetail() {
                                             <Box key={key}>
                                                 {stringValue.length > 60 ? (
                                                     <>
-                                                        <Typography
+                                                        {key.trim().length > 0 && (<Typography
                                                             variant="h6"
                                                             sx={{ fontWeight: 600, fontSize: { xs: '1.1rem', md: '1.5rem',mt:1 } }}
                                                         >
                                                             {key}
-                                                        </Typography>
+                                                        </Typography>)}
                                                         <Typography
                                                             variant="body1"
                                                             sx={{ mb: 2, fontSize: { xs: '1rem', md: '1.1rem' } }}
