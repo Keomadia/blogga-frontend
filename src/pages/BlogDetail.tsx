@@ -332,7 +332,7 @@ export default function BlogDetail() {
                                                                 fontSize: { xs: '0.9rem', md: '1.2rem' },
                                                             }}
                                                         >
-                                                            : {stringValue}
+                                                            {stringValue}
                                                         </Typography>
                                                     </Box>
                                                 )}
