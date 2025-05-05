@@ -104,7 +104,7 @@ export default function MainContent() {
     fetchData();
     setTimeout(() => {
       setLoading(false);
-    }, 1200);
+    }, 2200);
     
   }, []);
 
@@ -188,7 +188,7 @@ export default function MainContent() {
       </Box>
       <Grid container spacing={2} columns={12}>
         {randomBlogs.length === 0 && <Grid size={{ xs: 12, md: 12 }}>
-          <Typography gutterBottom variant="h3" component="div">No Matching Blogs found</Typography>
+          <Typography gutterBottom variant="h3" component="div">No Blogs found</Typography>
           <Button variant='outlined' onClick={() => navigate('/blog')}>Blog</Button>
         </Grid>}
         
