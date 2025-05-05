@@ -54,6 +54,7 @@ export default function Navbar() {
       .then(() => {
         setUser(null);
         navigate('/');
+        setOpen(false)
       })
       .catch((error: Error) => {
         console.error("Logout Error: ", error.message);
