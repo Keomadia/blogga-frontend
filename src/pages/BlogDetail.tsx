@@ -2,6 +2,7 @@ import { useState, memo ,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import CardMedia from '@mui/material/CardMedia';
+import Latest from '../components/Latest';
 // import {  IconButton } from '@mui/material';
 // import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 // import ThumbDownAltIcon from '@mui/icons-material/ThumbDownAlt';
@@ -332,7 +333,7 @@ export default function BlogDetail() {
                                                                 fontSize: { xs: '0.9rem', md: '1.2rem' },
                                                             }}
                                                         >
-                                                            {stringValue}
+                                                           - {stringValue}
                                                         </Typography>
                                                     </Box>
                                                 )}
@@ -372,7 +373,9 @@ export default function BlogDetail() {
 
                 <ShareButton description={blog.description} id={blog.id} title={blog.title} />
             </Box>
-            </Box>
+            </Box>  
+
+            <Latest />
             <Dialog
                 open={Boolean(openImage)}
                 onClose={() => {
@@ -423,7 +426,7 @@ export default function BlogDetail() {
                     />
                 </Box>
                 </Dialog>
-
+                
         </DefaultLayout>
     );
 }
